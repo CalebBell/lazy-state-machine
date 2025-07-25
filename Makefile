@@ -16,7 +16,12 @@ check: ## Run code quality tools.
 .PHONY: test
 test: ## Test the code with pytest
 	@echo "🚀 Testing code: Running pytest"
-	@uv run python -m pytest --doctest-modules
+	@uv run python -m pytest --doctest-modules tests/ examples/
+
+.PHONY: coverage
+coverage: ## Test the code with pytest and code coverage
+	@echo "🚀 Testing code: Running pytest with coverage"
+	@uv run python -m pytest --doctest-modules tests/ examples/  --cov-report html --cov=lazy_state_machine --cov-branch
 
 .PHONY: build
 build: clean-build ## Build wheel file
@@ -27,14 +32,6 @@ build: clean-build ## Build wheel file
 clean-build: ## Clean build artifacts
 	@echo "🚀 Removing build artifacts"
 	@uv run python -c "import shutil; import os; shutil.rmtree('dist') if os.path.exists('dist') else None"
-
-.PHONY: publish
-publish: ## Publish a release to PyPI.
-	@echo "🚀 Publishing."
-	@uvx twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
-
-.PHONY: build-and-publish
-build-and-publish: build publish ## Build and publish.
 
 .PHONY: help
 help:

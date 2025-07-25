@@ -1,74 +1,61 @@
 # lazy-state-machine
 
-[![Release](https://img.shields.io/github/v/release/CalebBell/lazy-state-machine)](https://img.shields.io/github/v/release/CalebBell/lazy-state-machine)
-[![Build status](https://img.shields.io/github/actions/workflow/status/CalebBell/lazy-state-machine/main.yml?branch=main)](https://github.com/CalebBell/lazy-state-machine/actions/workflows/main.yml?query=branch%3Amain)
-[![codecov](https://codecov.io/gh/CalebBell/lazy-state-machine/branch/main/graph/badge.svg)](https://codecov.io/gh/CalebBell/lazy-state-machine)
-[![Commit activity](https://img.shields.io/github/commit-activity/m/CalebBell/lazy-state-machine)](https://img.shields.io/github/commit-activity/m/CalebBell/lazy-state-machine)
-[![License](https://img.shields.io/github/license/CalebBell/lazy-state-machine)](https://img.shields.io/github/license/CalebBell/lazy-state-machine)
+This repository contains an implementation of a programmable finite state machine (FSM).
 
-Simple state machine over a user-defined function
+This implementation accepts a transition function which is a general-purpose Python function.
 
-- **Github repository**: <https://github.com/CalebBell/lazy-state-machine/>
-- **Documentation** <https://CalebBell.github.io/lazy-state-machine/>
+I chose this approach because while understanding how the rules for a modulus-3 state machine were derived,
+I noticed the rules table grows very quickly with modulus number, and I ran out of
+memory when I tried to obtain the table for a 64-bit number. The name `lazy-state-machine`
+was chosen because it allows for rules to be derived on-demand instead of pretabulated.
 
-## Getting started with your project
+Accepting a Python function in the FSM also allows for computing nondeterminism.
 
-### 1. Create a New Repository
+In practice accepting a Python function makes the machines hard to analyze,
+and in production code where possible I would want to use a transition table
+and draw it out in a nice diagram.
 
-First, create a repository on GitHub with the same name as this project, and then run the following commands:
+The code is laid out as follows:
 
-```bash
-git init -b main
-git add .
-git commit -m "init commit"
-git remote add origin git@github.com:CalebBell/lazy-state-machine.git
-git push -u origin main
-```
+* `lazy_state_machine/exceptions.py` - Errors the machine can generate representing various misconfigurations or transition function misbehaviors
+* `lazy_state_machine/lazy_state_machine.py` - The state machine, which is configured on `__init__` and is immutable, accepting inputs through three different functions for different purposes
+* `tests/test_invalid_inputs.py` - Cases where each of the exceptions would be triggered
+* `tests/test_modulus.py` - My first use of the FSM, and where I explored the derivation of modulus rules
+* `tests/test_turnstile.py` - A second example
+* `examples/FSM_modulus_three.py` - A standalone modulus three demonstration
+* `examples/schrodingers_cat.py` - A little fun example of nondeterminism, and a FSM's state after processing a provided input not being in the accepted final states
 
-### 2. Set Up Your Development Environment
+The tests provide complete coverage.
 
-Then, install the environment and the pre-commit hooks with
-
-```bash
-make install
-```
-
-This will also generate your `uv.lock` file
-
-### 3. Run the pre-commit hooks
-
-Initially, the CI/CD pipeline might be failing due to formatting issues. To resolve those run:
-
-```bash
-uv run pre-commit run -a
-```
-
-### 4. Commit the changes
-
-Lastly, commit the changes made by the two steps above to your repository.
-
-```bash
-git add .
-git commit -m 'Fix formatting issues'
-git push origin main
-```
-
-You are now ready to start development on your project!
-The CI/CD pipeline will be triggered when you open a pull request, merge to main, or when you create a new release.
-
-To finalize the set-up for publishing to PyPI, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/publishing/#set-up-for-pypi).
-For activating the automatic documentation with MkDocs, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/mkdocs/#enabling-the-documentation-on-github).
-To enable the code coverage reports, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/codecov/).
-
-## Releasing a new version
-
-- Create an API Token on [PyPI](https://pypi.org/).
-- Add the API Token to your projects secrets with the name `PYPI_TOKEN` by visiting [this page](https://github.com/CalebBell/lazy-state-machine/settings/secrets/actions/new).
-- Create a [new release](https://github.com/CalebBell/lazy-state-machine/releases/new) on Github.
-- Create a new tag in the form `*.*.*`.
-
-For more details, see [here](https://fpgmaas.github.io/cookiecutter-uv/features/cicd/#how-to-trigger-a-release).
+If this were code I was intending on seriously releasing as an open source project, or using commercially, I would continue with the steps in TODO.md.
 
 ---
 
-Repository initiated with [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv).
+I used a tool called cookiecutter to add tooling to this repo according to a predefined template.
+I chose the template [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv) which
+uses the new-and-rising python package manager uv, to experiment with it.
+
+The template provides the following options; the coverage I added.
+
+* `make install` - Install the dependencies (they are all development dependencies, no special libraries are needed to use the library)
+* `make check` - Linters (formatting, code smells, typing)
+* `make test` - Testing though pytest
+* `make coverage` - Testing through pytest with code coverage, generated as html in a folder `htmlcov`
+* `make build` - Create a distributable python package (wheel)
+* `make clean-build` - Clean the build files after running `make build`
+
+Please note that if you don't have `uv` already installed, it can be installed with any of the following on Linux or MacOS:
+
+`curl -LsSf https://astral.sh/uv/install.sh | sh`
+
+`pip install uv`
+
+`pipx install uv`
+
+On windows it can be installed with:
+
+`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+
+If on windows, make can be installed via instructions on this page:
+
+https://gnuwin32.sourceforge.net/packages/make.htm
