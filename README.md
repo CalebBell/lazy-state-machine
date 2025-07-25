@@ -15,7 +15,7 @@ In practice accepting a Python function makes the machines hard to analyze,
 and in production code where possible I would want to use a transition table
 and draw it out in a nice diagram.
 
-The code is laid out as follows:
+## Code Structure
 
 * `lazy_state_machine/exceptions.py` - Errors the machine can generate representing various misconfigurations or transition function misbehaviors
 * `lazy_state_machine/lazy_state_machine.py` - The state machine, which is configured on `__init__` and is immutable, accepting inputs through three different functions for different purposes
@@ -27,13 +27,38 @@ The code is laid out as follows:
 
 The tests provide complete coverage.
 
+## Running Examples
+
+The examples depend on the `lazy_state_machine` library. Run them from the repository root using `uv`:
+
+```bash
+uv run --with . examples/FSM_modulus_three.py
+uv run --with . examples/schrodingers_cat.py
+```
+
+## Development Setup
+
+To develop on this library, it can also be installed into the system Python via the traditional approach:
+
+```bash
+pip install -e .
+```
+
+## Building and Distribution
+
+The package can be built as a wheel with `make build` and installed into any other python environment via:
+
+```bash
+pip install /path/to/lazy-state-machine/dist/lazy_state_machine-*.tar.gz
+```
+
 If this were code I was intending on seriously releasing as an open source project, or using commercially, I would continue with the steps in TODO.md.
 
----
+## Development Tools
 
 I used a tool called cookiecutter to add tooling to this repo according to a predefined template.
 I chose the template [fpgmaas/cookiecutter-uv](https://github.com/fpgmaas/cookiecutter-uv) which
-uses the new-and-rising python package manager uv, to experiment with it.
+uses the python package manager uv, to experiment with it.
 
 The template provides the following options; the coverage I added.
 
@@ -44,18 +69,21 @@ The template provides the following options; the coverage I added.
 * `make build` - Create a distributable python package (wheel)
 * `make clean-build` - Clean the build files after running `make build`
 
+## Installation Requirements
+
 Please note that if you don't have `uv` already installed, it can be installed with any of the following on Linux or MacOS:
 
-`curl -LsSf https://astral.sh/uv/install.sh | sh`
-
-`pip install uv`
-
-`pipx install uv`
+```bash
+curl -LsSf https://astral.sh/uv/install.sh | sh
+pip install uv
+pipx install uv
+```
 
 On windows it can be installed with:
 
-`powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"`
+```powershell
+powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+```
 
 If on windows, make can be installed via instructions on this page:
-
 https://gnuwin32.sourceforge.net/packages/make.htm
